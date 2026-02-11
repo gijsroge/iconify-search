@@ -16,7 +16,8 @@
       "dependencies": [
         "@gijsroge/iconify-search",
         "@tanstack/react-query",
-        "@tanstack/react-pacer"
+        "@tanstack/react-pacer",
+        "@tanstack/react-virtual"
       ],
       "files": [
         {

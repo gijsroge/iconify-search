@@ -1,10 +1,10 @@
 "use client";
 
-import * as React from "react";
 import { useDebouncedValue } from "@tanstack/react-pacer";
-import { useIconifySearchAll } from "./use-iconify-search.js";
-import { getIconUrl } from "./iconify.js";
+import * as React from "react";
 import type { IconifySearchResponse } from "./iconify.js";
+import { getIconUrl } from "./iconify.js";
+import { useIconifySearchAll } from "./use-iconify-search.js";
 
 const DEFAULT_DEBOUNCE_MS = 300;
 
@@ -65,7 +65,7 @@ export function IconifySearchPrimitive({
     (ids: string[]) => {
       setSelectedIconsState(multiple ? ids : ids.slice(0, 1));
     },
-    [multiple]
+    [multiple],
   );
 
   const selectIcon = React.useCallback(
@@ -74,19 +74,19 @@ export function IconifySearchPrimitive({
         setSelectedIconsState((prev) =>
           prev.includes(iconId)
             ? prev.filter((id) => id !== iconId)
-            : [...prev, iconId]
+            : [...prev, iconId],
         );
       } else {
         setSelectedIconsState([iconId]);
       }
     },
-    [multiple]
+    [multiple],
   );
 
   const [debouncedQuery, debouncer] = useDebouncedValue(
     query,
     { wait: debounceMs },
-    (s) => ({ isPending: s.isPending })
+    (s) => ({ isPending: s.isPending }),
   );
   const isDebouncing = debouncer.state.isPending ?? false;
   const { data, isLoading, isFetching } = useIconifySearchAll(debouncedQuery);

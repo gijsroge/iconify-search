@@ -1,7 +1,6 @@
 "use client";
 
-import * as React from "react";
-import { LoaderIcon, SearchIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,10 +8,162 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { IconifySearchPrimitive } from "@gijsroge/iconify-search";
 import { cn } from "@/lib/utils";
+import type { IconifySearchState } from "@gijsroge/iconify-search";
+import { IconifySearchPrimitive } from "@gijsroge/iconify-search";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { LoaderIcon, SearchIcon } from "lucide-react";
+import * as React from "react";
+
+const ICONS_PER_ROW = 8;
+const ROW_HEIGHT = 40;
+const HEADER_ROW_HEIGHT = 28;
+
+type VirtualRow =
+  | { type: "header"; name: string; key: string }
+  | { type: "icons"; iconIds: string[]; key: string };
+
+function flattenGroupsToRows(
+  groups: Array<{ prefix: string; name: string; icons: string[] }>,
+): VirtualRow[] {
+  const rows: VirtualRow[] = [];
+  for (const { prefix, name, icons } of groups) {
+    rows.push({ type: "header", name, key: `h-${prefix}` });
+    for (let i = 0; i < icons.length; i += ICONS_PER_ROW) {
+      rows.push({
+        type: "icons",
+        iconIds: icons.slice(i, i + ICONS_PER_ROW),
+        key: `${prefix}-${i}`,
+      });
+    }
+  }
+  return rows;
+}
+
+const IconCell = React.memo(function IconCell({
+  iconId,
+  isSelected,
+  selectIcon,
+  onClose,
+  multiple,
+  getIconUrl,
+}: {
+  iconId: string;
+  isSelected: boolean;
+  selectIcon: (iconId: string) => void;
+  onClose: () => void;
+  multiple: boolean;
+  getIconUrl: (iconId: string, size?: number) => string;
+}) {
+  const onSelect = React.useCallback(() => {
+    selectIcon(iconId);
+    if (!multiple) onClose();
+  }, [selectIcon, iconId, multiple, onClose]);
+
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className={cn(
+        "flex size-10 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-accent",
+        isSelected && "bg-accent",
+      )}
+    >
+      <img
+        src={getIconUrl(iconId, 24)}
+        alt={iconId.split(":")[1] ?? iconId}
+        className="size-6"
+        width={24}
+        height={24}
+      />
+    </button>
+  );
+});
+
+function VirtualizedIconList({
+  state,
+  setOpen,
+}: {
+  state: IconifySearchState;
+  setOpen: (open: boolean) => void;
+}) {
+  const parentRef = React.useRef<HTMLDivElement>(null);
+  const onClose = React.useCallback(() => setOpen(false), [setOpen]);
+  const rows = React.useMemo(
+    () => flattenGroupsToRows(state.groups),
+    [state.groups],
+  );
+
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: (index) =>
+      rows[index].type === "header" ? HEADER_ROW_HEIGHT : ROW_HEIGHT,
+    overscan: 4,
+  });
+
+  const selectedSet = React.useMemo(
+    () => new Set(state.selectedIcons),
+    [state.selectedIcons],
+  );
+
+  return (
+    <div
+      ref={parentRef}
+      className="scroll-fade-y min-h-0 flex-1 overflow-y-auto"
+      style={{ contain: "strict" }}
+    >
+      <div
+        style={{
+          height: `${virtualizer.getTotalSize()}px`,
+          width: "100%",
+          position: "relative",
+        }}
+      >
+        {virtualizer.getVirtualItems().map((virtualRow) => {
+          const row = rows[virtualRow.index];
+          if (row.type === "header") {
+            return (
+              <div
+                key={row.key}
+                className="text-muted-foreground absolute left-0 top-0 flex w-full items-center px-2 text-xs font-medium backdrop-blur sm:px-0"
+                style={{
+                  height: HEADER_ROW_HEIGHT,
+                  transform: `translateY(${virtualRow.start}px)`,
+                }}
+              >
+                {row.name}
+              </div>
+            );
+          }
+          return (
+            <div
+              key={row.key}
+              className="absolute left-0 flex w-full gap-1 flex-wrap"
+              style={{
+                height: ROW_HEIGHT,
+                transform: `translateY(${virtualRow.start}px)`,
+              }}
+            >
+              {row.iconIds.map((iconId) => (
+                <IconCell
+                  key={iconId}
+                  iconId={iconId}
+                  isSelected={selectedSet.has(iconId)}
+                  selectIcon={state.selectIcon}
+                  onClose={onClose}
+                  multiple={state.multiple}
+                  getIconUrl={state.getIconUrl}
+                />
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export interface IconifySearchProps {
   /** Allow selecting multiple icons */
@@ -81,59 +232,27 @@ export function IconifySearch({
                   />
                 )}
               </div>
-              <div className="scroll-fade-y min-h-0 flex-1">
-                {!state.debouncedQuery.trim() ? (
+              {!state.debouncedQuery.trim() ? (
+                <div className="scroll-fade-y min-h-0 flex-1">
                   <p className="text-muted-foreground py-8 text-center text-sm">
                     Type to search icons from Iconify
                   </p>
-                ) : state.isPending && !state.data ? (
+                </div>
+              ) : state.isPending && !state.data ? (
+                <div className="scroll-fade-y min-h-0 flex-1">
                   <p className="text-muted-foreground py-8 text-center text-sm">
                     Searching...
                   </p>
-                ) : state.groups.length === 0 ? (
+                </div>
+              ) : state.groups.length === 0 ? (
+                <div className="scroll-fade-y min-h-0 flex-1">
                   <p className="text-muted-foreground py-8 text-center text-sm">
                     No icons found. Try a different search.
                   </p>
-                ) : (
-                  <div className="flex flex-col gap-6 pb-4">
-                    {state.groups.map(({ prefix, name, icons }) => (
-                      <div key={prefix} className="flex flex-col gap-2">
-                        <h3 className="text-muted-foreground sticky top-0 bg-background/95 px-2 py-1 text-xs font-medium backdrop-blur sm:px-0">
-                          {name}
-                        </h3>
-                        <div className="grid grid-cols-6 gap-1 sm:grid-cols-8">
-                          {icons.map((iconId) => {
-                            const isSelected =
-                              state.selectedIcons.includes(iconId);
-                            return (
-                              <button
-                                key={iconId}
-                                type="button"
-                                onClick={() => {
-                                  state.selectIcon(iconId);
-                                  if (!state.multiple) setOpen(false);
-                                }}
-                                className={cn(
-                                  "flex size-10 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-accent",
-                                  isSelected && "bg-accent"
-                                )}
-                              >
-                                <img
-                                  src={state.getIconUrl(iconId, 24)}
-                                  alt={iconId.split(":")[1] ?? iconId}
-                                  className="size-6"
-                                  width={24}
-                                  height={24}
-                                />
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <VirtualizedIconList state={state} setOpen={setOpen} />
+              )}
             </div>
             {state.multiple && state.selectedIcons.length > 0 && (
               <div className="flex items-center justify-between gap-4 pt-2 border-t -mx-6 px-6">
