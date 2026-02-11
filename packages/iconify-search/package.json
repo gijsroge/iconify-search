@@ -1,6 +1,6 @@
 {
   "name": "@gijsroge/iconify-search",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Renderless component for Iconify icon search. Build custom UIs with search state, grouping, and selection via render props.",
   "type": "module",
   "main": "./dist/index.js",
