@@ -44,7 +44,7 @@ function TweetButton() {
       "https://twitter.com/intent/tweet?" +
         new URLSearchParams({
           text: "Iconify Search – search and pick icons from Iconify in your React app",
-          url: window.location.origin,
+          url: window.location.origin + window.location.pathname,
         }).toString()
     );
   }, []);
