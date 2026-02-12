@@ -1,11 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Github, Star, Share } from "lucide-react";
+import { Github, Star, Share, Copy, Check } from "lucide-react";
 import { IconifySearch } from "@/registry/new-york/blocks/iconify-search/iconify-search";
+import { Button } from "@/components/ui/button";
 
 const GITHUB_REPO = "gijsroge/iconify-search";
 const GITHUB_URL = `https://github.com/${GITHUB_REPO}`;
+const SHADCN_ADD_CMD =
+  'npx shadcn@latest add "https://gijsroge.github.io/iconify-search/r/iconify-search.json"';
 
 function GitHubStarsButton() {
   const [stars, setStars] = React.useState<number | null>(null);
@@ -62,19 +65,50 @@ function TweetButton() {
   );
 }
 
+function CopyCommand({ command }: { command: string }) {
+  const [copied, setCopied] = React.useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText(command).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+  return (
+    <Button
+      type="button"
+      variant={"outline"}
+      onClick={copy}
+      className="overflow-hidden justify-start"
+      aria-label="Copy command"
+    >
+      <code className="min-w-0 flex-1 break-all py-0.5 truncate text-left">
+        {command}
+      </code>
+      <span className="flex items-center gap-2 size-5 shrink-0">
+        {copied ? (
+          <Check
+            className="h-4 w-4 shrink-0 text-muted-foreground"
+            aria-hidden
+          />
+        ) : (
+          <Copy
+            className="h-4 w-4 shrink-0 text-muted-foreground"
+            aria-hidden
+          />
+        )}
+      </span>
+    </Button>
+  );
+}
+
 export default function Home() {
   const [singleValue, setSingleValue] = React.useState<string[]>([]);
   const [singleQuery, setSingleQuery] = React.useState("");
   const [multipleValue, setMultipleValue] = React.useState<string[]>([]);
   const [multipleQuery, setMultipleQuery] = React.useState("");
 
-  const debug = {
-    single: { value: singleValue, searchQuery: singleQuery },
-    multiple: { value: multipleValue, searchQuery: multipleQuery },
-  };
-
   return (
-    <div className="max-w-3xl mx-auto flex flex-col min-h-svh px-4 py-8 gap-8">
+    <div className="max-w-4xl mx-auto flex flex-col min-h-svh px-4 py-8 gap-8">
       <header className="flex flex-col gap-6">
         <div className="flex items-center justify-between gap-y-6 gap-x-4 flex-wrap">
           <h1 className="text-3xl font-bold tracking-tight m-0">
@@ -115,6 +149,12 @@ export default function Home() {
         </p>
       </header>
       <main className="flex flex-col flex-1 gap-8">
+        <div className="flex flex-col gap-2">
+          <span className="text-sm text-muted-foreground">
+            Add the block to your shadcn project:
+          </span>
+          <CopyCommand command={SHADCN_ADD_CMD} />
+        </div>
         <div className="flex flex-col gap-4 border rounded-lg p-4 min-h-[200px] relative">
           <h2 className="text-sm text-muted-foreground sm:pl-3">
             Iconify Search (single)
@@ -142,15 +182,19 @@ export default function Home() {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium text-muted-foreground">
-            Debug (form values)
-          </h2>
-          <pre className="rounded-lg border bg-muted/50 p-4 text-xs overflow-x-auto">
-            {JSON.stringify(debug, null, 2)}
-          </pre>
-        </div>
       </main>
+      <footer className="text-muted-foreground text-sm text-center pt-4 pb-2">
+        If you find Iconify useful, please consider{" "}
+        <a
+          href="https://iconify.design/sponsors/"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="underline underline-offset-4 hover:text-foreground"
+        >
+          supporting the project
+        </a>
+        .
+      </footer>
     </div>
   );
 }
