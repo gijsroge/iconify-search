@@ -11,7 +11,7 @@
     "package:build": "cd packages/iconify-search && bun run build",
     "typecheck": "tsc --noEmit",
     "test": "cd packages/iconify-search && bun run test",
-    "publish:package": "cd packages/iconify-search && bun run build && bun publish"
+    "publish:package": "cd packages/iconify-search && bun run build && npm publish"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",

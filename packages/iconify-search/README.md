@@ -1,5 +1,3 @@
-# @gijsroge/iconify-search
-
 A **renderless** React component for searching [Iconify](https://iconify.design) icons. You get the search state, grouping, and selection logic—you build the UI (dialog, dropdown, inline list, etc.).
 
 Want a **ready-to-use** component (button + dialog) with [shadcn/ui](https://ui.shadcn.com)? Use the [iconify-search-component](https://github.com/gijsroge/iconify-search-component) repo and add the block via the shadcn registry—it uses this package under the hood.
@@ -64,27 +62,27 @@ function MyIconPicker() {
 
 ### `IconifySearchPrimitive`
 
-| Prop        | Type     | Default | Description                                              |
-| ----------- | -------- | ------- | -------------------------------------------------------- |
-| `multiple`  | `boolean`| `false` | Allow selecting multiple icons. When `false`, max one.   |
-| `debounceMs`| `number` | `300`   | Debounce delay (ms) before calling the Iconify search API. |
-| `children`  | `(state) => ReactNode` | — | Render prop receiving the search state.                  |
+| Prop         | Type                   | Default | Description                                                |
+| ------------ | ---------------------- | ------- | ---------------------------------------------------------- |
+| `multiple`   | `boolean`              | `false` | Allow selecting multiple icons. When `false`, max one.     |
+| `debounceMs` | `number`               | `300`   | Debounce delay (ms) before calling the Iconify search API. |
+| `children`   | `(state) => ReactNode` | —       | Render prop receiving the search state.                    |
 
 ### State (`IconifySearchState`)
 
-| Property         | Type     | Description |
-| ---------------- | -------- | ----------- |
-| `query`          | `string` | Current input value. |
-| `setQuery`       | `(value: string) => void` | Update the search query. |
-| `debouncedQuery` | `string` | Query used for API calls (debounced). |
-| `isPending`      | `boolean`| `true` while debouncing or fetching. |
-| `data`           | `IconifySearchResponse \| undefined` | Raw API response. |
-| `groups`         | `Array<{ prefix, name, icons }>` | Icons grouped by collection. |
-| `selectedIcons`  | `string[]` | Selected icon IDs (e.g. `["mdi:home", "lucide:search"]`). |
-| `setSelectedIcons` | `(ids: string[]) => void` | Set selection (respects `multiple`). |
-| `selectIcon`     | `(iconId: string) => void` | Toggle (multiple) or set (single) selection. |
-| `getIconUrl`     | `(iconId: string, size?: number) => string` | Iconify CDN URL for an icon. |
-| `multiple`       | `boolean` | Same as the prop. |
+| Property           | Type                                        | Description                                               |
+| ------------------ | ------------------------------------------- | --------------------------------------------------------- |
+| `query`            | `string`                                    | Current input value.                                      |
+| `setQuery`         | `(value: string) => void`                   | Update the search query.                                  |
+| `debouncedQuery`   | `string`                                    | Query used for API calls (debounced).                     |
+| `isPending`        | `boolean`                                   | `true` while debouncing or fetching.                      |
+| `data`             | `IconifySearchResponse \| undefined`        | Raw API response.                                         |
+| `groups`           | `Array<{ prefix, name, icons }>`            | Icons grouped by collection.                              |
+| `selectedIcons`    | `string[]`                                  | Selected icon IDs (e.g. `["mdi:home", "lucide:search"]`). |
+| `setSelectedIcons` | `(ids: string[]) => void`                   | Set selection (respects `multiple`).                      |
+| `selectIcon`       | `(iconId: string) => void`                  | Toggle (multiple) or set (single) selection.              |
+| `getIconUrl`       | `(iconId: string, size?: number) => string` | Iconify CDN URL for an icon.                              |
+| `multiple`         | `boolean`                                   | Same as the prop.                                         |
 
 ### Hooks and utilities
 
