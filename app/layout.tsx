@@ -13,14 +13,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const baseUrl =
+  process.env.NEXT_PUBLIC_BASE_URL ??
+  "https://gijsroge.github.io/iconify-search-component/";
+
 export const metadata: Metadata = {
   title: "Iconify Search",
   description:
     "Search and pick icons from Iconify in your React app. Ready-to-use component via shadcn or renderless primitive to build your own UI.",
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL ??
-      "https://gijsroge.github.io/iconify-search-component/"
-  ),
+  metadataBase: new URL(baseUrl),
   openGraph: {
     title: "Iconify Search",
     description:
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     siteName: "Iconify Search",
     images: [
       {
-        url: "/og-image.png",
+        url: new URL("og-image.png", baseUrl).toString(),
         width: 1200,
         height: 630,
         alt: "Iconify Search – search and pick icons from Iconify",
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
     title: "Iconify Search",
     description:
       "Search and pick icons from Iconify in your React app. Ready-to-use component via shadcn or renderless primitive.",
-    images: ["/og-image.png"],
+    images: [new URL("og-image.png", baseUrl).toString()],
   },
 };
 
