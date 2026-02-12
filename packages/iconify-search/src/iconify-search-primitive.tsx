@@ -44,6 +44,18 @@ export interface IconifySearchPrimitiveProps {
   multiple?: boolean;
   /** Debounce delay in ms before triggering search */
   debounceMs?: number;
+  /** Controlled selected icon IDs (use with onValueChange) */
+  value?: string[];
+  /** Initial selected icon IDs when uncontrolled */
+  defaultValue?: string[];
+  /** Called when selection changes (use for controlled mode) */
+  onValueChange?: (value: string[]) => void;
+  /** Controlled search query (use with onSearchChange) */
+  searchValue?: string;
+  /** Initial search query when uncontrolled */
+  defaultSearchValue?: string;
+  /** Called when search query changes (use for controlled mode) */
+  onSearchChange?: (value: string) => void;
   /** Render function receiving search state */
   children: (state: IconifySearchState) => React.ReactNode;
 }
@@ -56,31 +68,55 @@ export interface IconifySearchPrimitiveProps {
 export function IconifySearchPrimitive({
   multiple = false,
   debounceMs = DEFAULT_DEBOUNCE_MS,
+  value: controlledValue,
+  defaultValue = [],
+  onValueChange,
+  searchValue: controlledSearchValue,
+  defaultSearchValue = "",
+  onSearchChange,
   children,
 }: IconifySearchPrimitiveProps): React.ReactElement {
-  const [query, setQuery] = React.useState("");
-  const [selectedIcons, setSelectedIconsState] = React.useState<string[]>([]);
+  const [internalQuery, setInternalQuery] = React.useState(defaultSearchValue);
+  const [internalSelectedIcons, setInternalSelectedIcons] =
+    React.useState<string[]>(defaultValue);
+
+  const isControlledQuery = controlledSearchValue !== undefined;
+  const isControlledValue = controlledValue !== undefined;
+
+  const query = isControlledQuery ? controlledSearchValue : internalQuery;
+  const selectedIcons = isControlledValue ? controlledValue : internalSelectedIcons;
+
+  const setQuery = React.useCallback(
+    (next: string) => {
+      if (onSearchChange) onSearchChange(next);
+      if (!isControlledQuery) setInternalQuery(next);
+    },
+    [isControlledQuery, onSearchChange],
+  );
 
   const setSelectedIcons = React.useCallback(
     (ids: string[]) => {
-      setSelectedIconsState(multiple ? ids : ids.slice(0, 1));
+      const next = multiple ? ids : ids.slice(0, 1);
+      if (onValueChange) onValueChange(next);
+      if (!isControlledValue) setInternalSelectedIcons(next);
     },
-    [multiple],
+    [multiple, isControlledValue, onValueChange],
   );
 
   const selectIcon = React.useCallback(
     (iconId: string) => {
       if (multiple) {
-        setSelectedIconsState((prev) =>
-          prev.includes(iconId)
-            ? prev.filter((id) => id !== iconId)
-            : [...prev, iconId],
-        );
+        const next = selectedIcons.includes(iconId)
+          ? selectedIcons.filter((id) => id !== iconId)
+          : [...selectedIcons, iconId];
+        if (onValueChange) onValueChange(next);
+        if (!isControlledValue) setInternalSelectedIcons(next);
       } else {
-        setSelectedIconsState([iconId]);
+        if (onValueChange) onValueChange([iconId]);
+        if (!isControlledValue) setInternalSelectedIcons([iconId]);
       }
     },
-    [multiple],
+    [multiple, selectedIcons, isControlledValue, onValueChange],
   );
 
   const [debouncedQuery, debouncer] = useDebouncedValue(

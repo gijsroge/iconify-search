@@ -25,7 +25,7 @@ type VirtualRow =
   | { type: "icons"; iconIds: string[]; key: string };
 
 function flattenGroupsToRows(
-  groups: Array<{ prefix: string; name: string; icons: string[] }>,
+  groups: Array<{ prefix: string; name: string; icons: string[] }>
 ): VirtualRow[] {
   const rows: VirtualRow[] = [];
   for (const { prefix, name, icons } of groups) {
@@ -67,7 +67,7 @@ const IconCell = React.memo(function IconCell({
       onClick={onSelect}
       className={cn(
         "flex size-10 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-accent",
-        isSelected && "bg-accent",
+        isSelected && "bg-accent"
       )}
     >
       <img
@@ -92,7 +92,7 @@ function VirtualizedIconList({
   const onClose = React.useCallback(() => setOpen(false), [setOpen]);
   const rows = React.useMemo(
     () => flattenGroupsToRows(state.groups),
-    [state.groups],
+    [state.groups]
   );
 
   const virtualizer = useVirtualizer({
@@ -105,7 +105,7 @@ function VirtualizedIconList({
 
   const selectedSet = React.useMemo(
     () => new Set(state.selectedIcons),
-    [state.selectedIcons],
+    [state.selectedIcons]
   );
 
   return (
@@ -168,15 +168,36 @@ function VirtualizedIconList({
 export interface IconifySearchProps {
   /** Allow selecting multiple icons */
   multiple?: boolean;
+  value?: string[];
+  defaultValue?: string[];
+  onValueChange?: (value: string[]) => void;
+  searchValue?: string;
+  defaultSearchValue?: string;
+  onSearchChange?: (value: string) => void;
 }
 
 export function IconifySearch({
   multiple = false,
+  value,
+  defaultValue,
+  onValueChange,
+  searchValue,
+  defaultSearchValue,
+  onSearchChange,
 }: IconifySearchProps): React.ReactElement | null {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <IconifySearchPrimitive debounceMs={300} multiple={multiple}>
+    <IconifySearchPrimitive
+      debounceMs={300}
+      multiple={multiple}
+      value={value}
+      defaultValue={defaultValue}
+      onValueChange={onValueChange}
+      searchValue={searchValue}
+      defaultSearchValue={defaultSearchValue}
+      onSearchChange={onSearchChange}
+    >
       {(state) => (
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
