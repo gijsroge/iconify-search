@@ -33,7 +33,7 @@ jobs:
 
       - name: Build static site
         env:
-          GITHUB_PAGES_BASE_PATH: /iconify-search-component
+          GITHUB_PAGES_BASE_PATH: /iconify-search
         run: bun run build
 
       - name: Upload artifact

@@ -1,6 +1,6 @@
 A **renderless** React component for searching [Iconify](https://iconify.design) icons. You get the search state, grouping, and selection logic—you build the UI (dialog, dropdown, inline list, etc.).
 
-Want a **ready-to-use** component (button + dialog) with [shadcn/ui](https://ui.shadcn.com)? Use the [iconify-search-component](https://github.com/gijsroge/iconify-search-component) repo and add the block via the shadcn registry—it uses this package under the hood.
+Want a **ready-to-use** component (button + dialog) with [shadcn/ui](https://ui.shadcn.com)? Use the [iconify-search](https://github.com/gijsroge/iconify-search) repo and add the block via the shadcn registry—it uses this package under the hood.
 
 ## Installation
 

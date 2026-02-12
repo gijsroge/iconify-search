@@ -15,7 +15,34 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Iconify Search",
-  description: "Search and browse icons from the Iconify API",
+  description:
+    "Search and pick icons from Iconify in your React app. Ready-to-use component via shadcn or renderless primitive to build your own UI.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL ??
+      "https://gijsroge.github.io/iconify-search-component/"
+  ),
+  openGraph: {
+    title: "Iconify Search",
+    description:
+      "Search and pick icons from Iconify in your React app. Ready-to-use component via shadcn or renderless primitive to build your own UI.",
+    type: "website",
+    siteName: "Iconify Search",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Iconify Search – search and pick icons from Iconify",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Iconify Search",
+    description:
+      "Search and pick icons from Iconify in your React app. Ready-to-use component via shadcn or renderless primitive.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({

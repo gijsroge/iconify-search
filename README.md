@@ -13,7 +13,7 @@ Search and pick icons from [Iconify](https://iconify.design) in your React app. 
 Add the ready-to-use component to your shadcn/ui project:
 
 ```bash
-npx shadcn@latest add "https://raw.githubusercontent.com/gijsroge/iconify-search-component/refs/heads/main/public/r/iconify-search.json"
+npx shadcn@latest add "https://raw.githubusercontent.com/gijsroge/iconify-search/refs/heads/main/public/r/iconify-search.json"
 ```
 
 ### Option 2: Package manager
