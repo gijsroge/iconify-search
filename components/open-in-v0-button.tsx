@@ -1,6 +1,10 @@
 import { Button } from "@/registry/new-york/ui/button"
 import { cn } from "@/lib/utils"
 
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL ??
+  "https://gijsroge.github.io/iconify-search-component"
+
 export function OpenInV0Button({
   name,
   className,
@@ -16,7 +20,7 @@ export function OpenInV0Button({
       asChild
     >
       <a
-        href={`https://v0.dev/chat/api/open?url=${process.env.NEXT_PUBLIC_BASE_URL}/r/${name}.json`}
+        href={`https://v0.dev/chat/api/open?url=${encodeURIComponent(`${BASE_URL}/r/${name}.json`)}`}
         target="_blank"
         rel="noreferrer"
       >

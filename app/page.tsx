@@ -13,7 +13,11 @@ function GitHubStarsButton() {
   React.useEffect(() => {
     fetch(`https://api.github.com/repos/${GITHUB_REPO}`)
       .then((r) => r.json())
-      .then((data) => typeof data.stargazers_count === "number" && setStars(data.stargazers_count))
+      .then(
+        (data) =>
+          typeof data.stargazers_count === "number" &&
+          setStars(data.stargazers_count)
+      )
       .catch(() => {});
   }, []);
   return (
@@ -32,7 +36,9 @@ function GitHubStarsButton() {
 function TweetButton() {
   const [tweetUrl, setTweetUrl] = React.useState(
     "https://twitter.com/intent/tweet?text=" +
-      encodeURIComponent("Iconify Search – search and pick icons from Iconify in your React app")
+      encodeURIComponent(
+        "Iconify Search – search and pick icons from Iconify in your React app"
+      )
   );
   React.useEffect(() => {
     setTweetUrl(
@@ -70,28 +76,41 @@ export default function Home() {
 
   return (
     <div className="max-w-3xl mx-auto flex flex-col min-h-svh px-4 py-8 gap-8">
-      <header className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Iconify Search</h1>
-            <p className="text-muted-foreground">
-              Search and browse icons from the Iconify API.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="inline-flex items-center gap-1.5 rounded-md border bg-background px-2.5 py-1.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
-              aria-label="View on GitHub"
-            >
-              <Github className="h-4 w-4" />
-              GitHub
-            </a>
-            <GitHubStarsButton />
-            <TweetButton />
-          </div>
+      <header className="flex flex-col gap-6">
+        <h1 className="text-3xl font-bold tracking-tight m-0">
+          Iconify Search
+        </h1>
+
+        <p className="text-muted-foreground max-w-xl m-0">
+          Search and pick icons from{" "}
+          <a
+            href="https://iconify.design"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="underline underline-offset-4 hover:text-foreground"
+          >
+            Iconify
+          </a>{" "}
+          in your React app. Use the ready-to-use shadcn block below, or the{" "}
+          <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-medium">
+            @gijsroge/iconify-search
+          </code>{" "}
+          package with a renderless primitive to build your own UI.
+        </p>
+
+        <div className="flex items-center gap-2 m-0">
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex items-center gap-1.5 rounded-md border bg-background px-2.5 py-1.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+            aria-label="View on GitHub"
+          >
+            <Github className="h-4 w-4" />
+            GitHub
+          </a>
+          <GitHubStarsButton />
+          <TweetButton />
         </div>
       </header>
       <main className="flex flex-col flex-1 gap-8">

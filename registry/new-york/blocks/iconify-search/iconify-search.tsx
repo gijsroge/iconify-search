@@ -16,19 +16,31 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { LoaderIcon, SearchIcon, X } from "lucide-react";
 import * as React from "react";
 
-const ICONS_PER_ROW = 8;
+const ICON_CELL_SIZE = 40;
+const ROW_GAP = 4;
 const ROW_HEIGHT = 40;
 const HEADER_ROW_HEIGHT = 28;
+const SCROLLBAR_GUTTER = 12;
+
+function getIconsPerRow(containerWidth: number): number {
+  if (containerWidth <= 0) return 8;
+  const usable = containerWidth - SCROLLBAR_GUTTER;
+  return Math.max(1, Math.floor(usable / (ICON_CELL_SIZE + ROW_GAP)));
+}
 
 type IconifySearchContextValue = {
   disabled: boolean;
 };
 
-const IconifySearchContext = React.createContext<IconifySearchContextValue | null>(null);
+const IconifySearchContext =
+  React.createContext<IconifySearchContextValue | null>(null);
 
 function useIconifySearchContext(): IconifySearchContextValue {
   const ctx = React.useContext(IconifySearchContext);
-  if (!ctx) throw new Error("useIconifySearchContext must be used within IconifySearch");
+  if (!ctx)
+    throw new Error(
+      "useIconifySearchContext must be used within IconifySearch"
+    );
   return ctx;
 }
 
@@ -37,15 +49,16 @@ type VirtualRow =
   | { type: "icons"; iconIds: string[]; key: string };
 
 function flattenGroupsToRows(
-  groups: Array<{ prefix: string; name: string; icons: string[] }>
+  groups: Array<{ prefix: string; name: string; icons: string[] }>,
+  iconsPerRow: number
 ): VirtualRow[] {
   const rows: VirtualRow[] = [];
   for (const { prefix, name, icons } of groups) {
     rows.push({ type: "header", name, key: `h-${prefix}` });
-    for (let i = 0; i < icons.length; i += ICONS_PER_ROW) {
+    for (let i = 0; i < icons.length; i += iconsPerRow) {
       rows.push({
         type: "icons",
-        iconIds: icons.slice(i, i + ICONS_PER_ROW),
+        iconIds: icons.slice(i, i + iconsPerRow),
         key: `${prefix}-${i}`,
       });
     }
@@ -104,10 +117,27 @@ function VirtualizedIconList({
   setOpen: (open: boolean) => void;
 }) {
   const parentRef = React.useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = React.useState(0);
+
+  React.useEffect(() => {
+    const el = parentRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      const { width } = entries[0]?.contentRect ?? { width: 0 };
+      setContainerWidth(width);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const iconsPerRow = React.useMemo(
+    () => getIconsPerRow(containerWidth),
+    [containerWidth]
+  );
   const onClose = React.useCallback(() => setOpen(false), [setOpen]);
   const rows = React.useMemo(
-    () => flattenGroupsToRows(state.groups),
-    [state.groups]
+    () => flattenGroupsToRows(state.groups, iconsPerRow),
+    [state.groups, iconsPerRow]
   );
 
   const virtualizer = useVirtualizer({
@@ -155,7 +185,7 @@ function VirtualizedIconList({
           return (
             <div
               key={row.key}
-              className="absolute left-0 flex w-full gap-1 flex-wrap"
+              className="absolute left-0 flex w-full gap-1"
               style={{
                 height: ROW_HEIGHT,
                 transform: `translateY(${virtualRow.start}px)`,
@@ -330,9 +360,7 @@ function IconifySearchUI({
 }
 
 export interface IconifySearchProps {
-  /** Allow selecting multiple icons */
   multiple?: boolean;
-  /** Disable the trigger, clear button, search input, and actions */
   disabled?: boolean;
   value?: string[];
   defaultValue?: string[];
@@ -366,9 +394,7 @@ export function IconifySearch({
       onSearchChange={onSearchChange}
     >
       {(state) => (
-        <IconifySearchContext.Provider
-          value={{ disabled: disabled ?? false }}
-        >
+        <IconifySearchContext.Provider value={{ disabled: disabled ?? false }}>
           <IconifySearchUI state={state} open={open} setOpen={setOpen} />
         </IconifySearchContext.Provider>
       )}
