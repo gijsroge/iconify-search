@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Github, Star, Share } from "lucide-react";
-import { OpenInV0Button } from "@/components/open-in-v0-button";
 import { IconifySearch } from "@/registry/new-york/blocks/iconify-search/iconify-search";
 
 const GITHUB_REPO = "gijsroge/iconify-search";
@@ -117,12 +116,9 @@ export default function Home() {
       </header>
       <main className="flex flex-col flex-1 gap-8">
         <div className="flex flex-col gap-4 border rounded-lg p-4 min-h-[200px] relative">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm text-muted-foreground sm:pl-3">
-              Iconify Search (single)
-            </h2>
-            <OpenInV0Button name="iconify-search" className="w-fit" />
-          </div>
+          <h2 className="text-sm text-muted-foreground sm:pl-3">
+            Iconify Search (single)
+          </h2>
           <div className="flex items-center justify-center min-h-[150px]">
             <IconifySearch
               value={singleValue}
@@ -133,12 +129,9 @@ export default function Home() {
           </div>
         </div>
         <div className="flex flex-col gap-4 border rounded-lg p-4 min-h-[200px] relative">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm text-muted-foreground sm:pl-3">
-              Iconify Search (multiple)
-            </h2>
-            <OpenInV0Button name="iconify-search" className="w-fit" />
-          </div>
+          <h2 className="text-sm text-muted-foreground sm:pl-3">
+            Iconify Search (multiple)
+          </h2>
           <div className="flex items-center justify-center min-h-[150px]">
             <IconifySearch
               multiple
