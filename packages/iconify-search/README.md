@@ -14,10 +14,19 @@ Peer dependencies (install them if you don’t already have them):
 npm install react @tanstack/react-query @tanstack/react-pacer
 ```
 
+To render the icons, use `@iconify/react`:
+
+```bash
+npm install @iconify/react
+```
+
+> **Render icons with `@iconify/react`, not `<img>`.** Iconify's public API rate limits clients that send it too many requests (Cloudflare error 1015). An `<img>` per icon makes one request per icon, which a scrolling result list turns into hundreds per second. `<Icon icon={iconId} />` from [`@iconify/react`](https://iconify.design/docs/icon-components/react/) loads all icons on screen in one request per icon set and caches them.
+
 ## Quick example
 
 ```tsx
 import { IconifySearchPrimitive } from "@gijsroge/iconify-search";
+import { Icon } from "@iconify/react";
 
 function MyIconPicker() {
   return (
@@ -39,13 +48,9 @@ function MyIconPicker() {
                     key={iconId}
                     onClick={() => state.selectIcon(iconId)}
                     aria-pressed={state.selectedIcons.includes(iconId)}
+                    aria-label={iconId}
                   >
-                    <img
-                      src={state.getIconUrl(iconId, 24)}
-                      alt={iconId}
-                      width={24}
-                      height={24}
-                    />
+                    <Icon icon={iconId} width={24} height={24} />
                   </button>
                 ))}
               </div>
@@ -87,14 +92,15 @@ function MyIconPicker() {
 | `selectedIcons`    | `string[]`                                  | Selected icon IDs (e.g. `["mdi:home", "lucide:search"]`). |
 | `setSelectedIcons` | `(ids: string[]) => void`                   | Set selection (respects `multiple`).                      |
 | `selectIcon`       | `(iconId: string) => void`                  | Toggle (multiple) or set (single) selection.              |
-| `getIconUrl`       | `(iconId: string, size?: number) => string` | Iconify CDN URL for an icon.                              |
+| `getIconUrl`       | `(iconId: string, size?: number) => string` | **Deprecated.** Iconify CDN URL for an icon. Don't use it to render result lists; see the note above. |
 | `multiple`         | `boolean`                                   | Same as the prop.                                         |
 
 ### Hooks and utilities
 
 - **`useIconifySearchAll(query)`** — React Query hook that fetches search results for a given (debounced) query. Use this if you want to wire the API yourself instead of using the primitive.
 - **`searchIcons(query, { limit?, start? })`** — Fetches from the Iconify search API. Returns a promise of `IconifySearchResponse`.
-- **`getIconUrl(iconId, size?)`** — Returns the Iconify CDN URL for an icon ID (e.g. `"mdi:home"`).
+- **`getIconSvg(iconId, size?)`** — Fetches the SVG markup of one icon, e.g. to store the picked icon. One request per call.
+- **`getIconUrl(iconId, size?)`** — **Deprecated.** Returns the Iconify CDN URL for an icon ID (e.g. `"mdi:home"`). Fine for a one-off link; rendering lists with it gets you rate limited.
 
 ## License
 

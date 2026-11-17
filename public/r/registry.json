@@ -11,6 +11,7 @@
       "registryDependencies": ["dialog", "button", "input"],
       "dependencies": [
         "@gijsroge/iconify-search",
+        "@iconify/react",
         "@tanstack/react-query",
         "@tanstack/react-pacer",
         "@tanstack/react-virtual"

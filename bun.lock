@@ -7,6 +7,7 @@
       "dependencies": {
         "@base-ui/react": "^1.1.0",
         "@gijsroge/iconify-search": "workspace:*",
+        "@iconify/react": "^6.0.4",
         "@iconify/types": "^2.0.0",
         "@radix-ui/react-label": "^2.1.8",
         "@radix-ui/react-slot": "^1.2.4",
@@ -37,7 +38,7 @@
     },
     "packages/iconify-search": {
       "name": "@gijsroge/iconify-search",
-      "version": "0.1.2",
+      "version": "0.2.0",
       "dependencies": {
         "@iconify/types": "^2.0.0",
       },
@@ -230,6 +231,8 @@
     "@gijsroge/iconify-search": ["@gijsroge/iconify-search@workspace:packages/iconify-search"],
 
     "@hono/node-server": ["@hono/node-server@1.19.9", "", { "peerDependencies": { "hono": "^4" } }, "sha512-vHL6w3ecZsky+8P5MD+eFfaGTyCeOHUIFYMGpQGbrBTSmNNoxv0if69rEZ5giu36weC5saFuznL411gRX7bJDw=="],
+
+    "@iconify/react": ["@iconify/react@6.0.4", "", { "dependencies": { "@iconify/types": "^2.0.0" }, "peerDependencies": { "react": ">=18.0.0" } }, "sha512-7nKd1eF52E1QGIl46eDWfMNPuTQHUxsXoK2Evgtu5jr386jCWTuWFLHM9vfsTNbUcKp+uq6ao+3skNUalDhH/w=="],
 
     "@iconify/types": ["@iconify/types@2.0.0", "", {}, "sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg=="],
 

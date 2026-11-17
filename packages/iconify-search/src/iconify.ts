@@ -30,6 +30,14 @@ export async function searchIcons(
   return response.json();
 }
 
+/**
+ * Iconify CDN URL for a single icon as an SVG file.
+ *
+ * @deprecated Don't use this to render icons in a list or grid. Every icon becomes its own
+ * request, and Iconify's public API rate limits clients that flood it (Cloudflare error 1015).
+ * Render icons with `<Icon icon={iconId} />` from `@iconify/react` instead: it loads all icons
+ * on screen in one request per icon set and caches them. Fine for a one-off link or download.
+ */
 export function getIconUrl(iconId: string, size = 24): string {
   const [prefix, name] = iconId.split(":");
   if (!prefix || !name) {
@@ -43,6 +51,7 @@ export function getIconUrl(iconId: string, size = 24): string {
 /**
  * Fetches the SVG markup for an icon by its ID (e.g. "mdi:home").
  * Returns the raw SVG string, or throws on invalid ID or network error.
+ * One request per call: use it for a single icon (e.g. to store the picked icon), not to render a list.
  */
 export async function getIconSvg(iconId: string, size = 24): Promise<string> {
   const url = getIconUrl(iconId, size);

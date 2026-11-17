@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { IconifySearchState } from "@gijsroge/iconify-search";
 import { IconifySearchPrimitive } from "@gijsroge/iconify-search";
+import { Icon } from "@iconify/react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { LoaderIcon, SearchIcon, X } from "lucide-react";
 import * as React from "react";
@@ -26,6 +27,34 @@ function getIconsPerRow(containerWidth: number): number {
   if (containerWidth <= 0) return 8;
   const usable = containerWidth - SCROLLBAR_GUTTER;
   return Math.max(1, Math.floor(usable / (ICON_CELL_SIZE + ROW_GAP)));
+}
+
+// @iconify/react loads every icon on screen in one request per icon set and caches it. One <img>
+// per icon would flood Iconify's API while scrolling and get rate limited.
+function IconifyIcon({
+  iconId,
+  size,
+  className,
+}: {
+  iconId: string;
+  size: number;
+  className?: string;
+}) {
+  return (
+    <Icon
+      icon={iconId}
+      width={size}
+      height={size}
+      className={className}
+      fallback={
+        <span
+          aria-hidden
+          className={cn("inline-block", className)}
+          style={{ width: size, height: size }}
+        />
+      }
+    />
+  );
 }
 
 type IconifySearchContextValue = {
@@ -72,14 +101,12 @@ const IconCell = React.memo(function IconCell({
   selectIcon,
   onClose,
   multiple,
-  getIconUrl,
 }: {
   iconId: string;
   isSelected: boolean;
   selectIcon: (iconId: string) => void;
   onClose: () => void;
   multiple: boolean;
-  getIconUrl: (iconId: string, size?: number) => string;
 }) {
   const { disabled } = useIconifySearchContext();
   const onSelect = React.useCallback(() => {
@@ -93,18 +120,13 @@ const IconCell = React.memo(function IconCell({
       type="button"
       disabled={disabled}
       onClick={onSelect}
+      aria-label={iconId.split(":")[1] ?? iconId}
       className={cn(
         "flex size-10 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-accent",
         isSelected && "bg-accent"
       )}
     >
-      <img
-        src={getIconUrl(iconId, 24)}
-        alt={iconId.split(":")[1] ?? iconId}
-        className="size-6"
-        width={24}
-        height={24}
-      />
+      <IconifyIcon iconId={iconId} size={24} className="size-6" />
     </button>
   );
 });
@@ -199,7 +221,6 @@ function VirtualizedIconList({
                   selectIcon={state.selectIcon}
                   onClose={onClose}
                   multiple={state.multiple}
-                  getIconUrl={state.getIconUrl}
                 />
               ))}
             </div>
@@ -234,13 +255,11 @@ function IconifySearchUI({
             {state.selectedIcons.length > 0 ? (
               <span className="flex items-center gap-2">
                 {state.selectedIcons.slice(0, 3).map((iconId) => (
-                  <img
+                  <IconifyIcon
                     key={iconId}
-                    src={state.getIconUrl(iconId, 18)}
-                    alt=""
+                    iconId={iconId}
+                    size={18}
                     className="size-4"
-                    width={18}
-                    height={18}
                   />
                 ))}
                 {state.selectedIcons.length > 3 && (
@@ -332,13 +351,11 @@ function IconifySearchUI({
                 }}
               >
                 {state.selectedIcons.map((iconId) => (
-                  <img
+                  <IconifyIcon
                     key={iconId}
-                    src={state.getIconUrl(iconId, 24)}
-                    alt={iconId.split(":")[1] ?? iconId}
+                    iconId={iconId}
+                    size={24}
                     className="size-6 shrink-0 rounded"
-                    width={16}
-                    height={16}
                   />
                 ))}
               </div>

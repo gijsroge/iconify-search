@@ -27,11 +27,13 @@ pnpm add @gijsroge/iconify-search
 yarn add @gijsroge/iconify-search
 ```
 
-Requires `@tanstack/react-query` and `@tanstack/react-pacer` as peer dependencies. Add them if not already installed:
+Requires `@tanstack/react-query` and `@tanstack/react-pacer` as peer dependencies. Add them if not already installed, plus `@iconify/react` to render the icons:
 
 ```bash
-bun add @tanstack/react-query @tanstack/react-pacer
+bun add @tanstack/react-query @tanstack/react-pacer @iconify/react
 ```
+
+> **Render icons with `@iconify/react`, not `<img>`.** Iconify's public API rate limits clients that send it too many requests (Cloudflare error 1015). An `<img>` per icon makes one request per icon, which a scrolling result list turns into hundreds per second. `<Icon icon={iconId} />` from [`@iconify/react`](https://iconify.design/docs/icon-components/react/) loads all icons on screen in one request per icon set and caches them.
 
 ## Examples
 
@@ -70,6 +72,7 @@ Icon IDs are in the form `prefix:name` (e.g. `mdi:home`, `lucide:search`).
 
 ```tsx
 import { IconifySearchPrimitive } from "@gijsroge/iconify-search";
+import { Icon } from "@iconify/react";
 
 <IconifySearchPrimitive multiple debounceMs={300}>
   {(state) => (
@@ -84,8 +87,12 @@ import { IconifySearchPrimitive } from "@gijsroge/iconify-search";
         {state.groups.map(({ prefix, icons }) => (
           <div key={prefix}>
             {icons.map((iconId) => (
-              <button key={iconId} onClick={() => state.selectIcon(iconId)}>
-                <img src={state.getIconUrl(iconId, 24)} alt={iconId} />
+              <button
+                key={iconId}
+                onClick={() => state.selectIcon(iconId)}
+                aria-label={iconId}
+              >
+                <Icon icon={iconId} width={24} height={24} />
               </button>
             ))}
           </div>

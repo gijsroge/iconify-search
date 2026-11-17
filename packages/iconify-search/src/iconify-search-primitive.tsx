@@ -27,7 +27,11 @@ export interface IconifySearchState {
   isFetching: boolean;
   /** Combined: debouncing or fetching */
   isPending: boolean;
-  /** Helper to get Iconify CDN URL for an icon */
+  /**
+   * Helper to get Iconify CDN URL for an icon.
+   * @deprecated One request per icon gets you rate limited by Iconify's API when rendering
+   * search results. Render icons with `<Icon icon={iconId} />` from `@iconify/react` instead.
+   */
   getIconUrl: (iconId: string, size?: number) => string;
   /** Selected icon IDs (always an array; max 1 when multiple=false) */
   selectedIcons: string[];
